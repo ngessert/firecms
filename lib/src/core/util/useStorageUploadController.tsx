@@ -152,7 +152,15 @@ export function useStorageUploadController<M extends object>({
             newInternalValue = [...internalValue,
                 ...(await Promise.all(acceptedFiles.map(async file => {
                     if (compression && compressionFormat(file)) {
-                        file = await resizeAndCompressImage(file, compression)
+                        //file = await resizeAndCompressImage(file, compression)
+                        console.log("Debug new...");
+                        const oldSize = file.size;
+                        const newFile = await resizeAndCompressImage(file, compression);
+                        const newSize = newFile.size;
+                        file = newSize < oldSize ? newFile : file;
+                        if (newSize > oldSize) {
+                            console.log("New file size larger, skipping compresison.");
+                        }
                     }
 
                     return {
@@ -166,7 +174,15 @@ export function useStorageUploadController<M extends object>({
         } else {
             let file = acceptedFiles[0]
             if (compression && compressionFormat(file)) {
-                file = await resizeAndCompressImage(file, compression)
+                //file = await resizeAndCompressImage(file, compression)
+                console.log("Debug new...");
+                const oldSize = file.size;
+                const newFile = await resizeAndCompressImage(file, compression);
+                const newSize = newFile.size;
+                file = newSize < oldSize ? newFile : file;
+                if (newSize > oldSize) {
+                    console.log("New file size larger, skipping compresison.");
+                }
             }
 
             newInternalValue = [{
@@ -229,7 +245,7 @@ const resizeAndCompressImage = (file: File, compression: ImageCompression) => ne
         file,
         compression.maxWidth || Number.MAX_VALUE,
         compression.maxHeight || Number.MAX_VALUE,
-        format,
+        "WEBP", //format,
         quality,
         0,
         (file: string | Blob | File | ProgressEvent<FileReader>) => resolve(file as File),

@@ -111,7 +111,7 @@ export function FirebaseLoginView({
 
     const sendMFASms = useCallback(() => {
         const auth = getAuth();
-        const recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha", { size: "invisible" });
+        const recaptchaVerifier = new RecaptchaVerifier("recaptcha", { size: "invisible" }, auth);
 
         const resolver = getMultiFactorResolver(auth, authController.authProviderError);
 
